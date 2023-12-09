@@ -1,6 +1,5 @@
 #pragma once
-#include "SFML\Graphics.hpp"
-#include "SFML\System.hpp"
+#include "Player.h"
 //#include "SFML\Window.hpp"
 //#include "SFML\Audio.hpp"
 

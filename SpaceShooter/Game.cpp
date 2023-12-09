@@ -3,6 +3,7 @@
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(1400,900), "SpaceShooter", sf::Style::Close | sf::Style::Titlebar);
+	this->window->setFramerateLimit(60);
 }
 
 Game::Game()
