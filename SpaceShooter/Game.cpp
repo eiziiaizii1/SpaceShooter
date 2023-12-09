@@ -6,14 +6,21 @@ void Game::initWindow()
 	this->window->setFramerateLimit(60);
 }
 
+void Game::initPlayer()
+{
+	this->player = new Player();
+}
+
 Game::Game()
 {
 	this->initWindow();
+	this->initPlayer();
 }
 
 Game::~Game()
 {
 	delete this->window;
+	delete this->player;
 }
 
 
@@ -45,16 +52,34 @@ void Game::update()
 			}
 		}
 	}
+
+	//MOVE PLAYER
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) 
+	{
+		this->player->move(-1.f, 0.f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		this->player->move(1.f, 0.f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		this->player->move(0.f, -1.f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		this->player->move(0.f, 1.f);
+	}
 }
 
 void Game::render()
 {
 	this->window->clear();
-	//--------------------------------------
+	//--------------------------------------------------------
 	//Draw things in here
+	this->player->render(*this->window);
 
 
-
-	//--------------------------------------
+	//--------------------------------------------------------
 	this->window->display();
 }
