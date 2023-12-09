@@ -12,7 +12,11 @@ private:
 
 	float movementSpeed;
 
+	float attackCooldown;
+	float attackCooldownMax;
+
 	//Private functions:
+	void initVariables();
 	void initTexture();
 	void initSprite();
 
@@ -25,6 +29,9 @@ public:
 
 	//Functions:
 	void move(const float directionX, const float directionY);
+	const bool canAttack();
+
+	void updateAttack();
 	void update();
 	void render(sf::RenderTarget& target);
 

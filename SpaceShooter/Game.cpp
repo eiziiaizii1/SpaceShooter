@@ -94,7 +94,7 @@ void Game::updatePlayerInput()
 		this->player->move(0.f, 1.f);
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) 
 	{
 		this->bullets.push_back(new Bullet(this->textures["BULLET"],
 			this->player->getPosition().x, this->player->getPosition().y, 0.f, -1.f, 5.f));
@@ -127,6 +127,8 @@ void Game::update()
 	this->updatePollEvent();
 
 	this->updatePlayerInput();
+
+	this->player->update();
 
 	this->updateBullets();
 }
