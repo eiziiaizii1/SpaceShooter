@@ -3,6 +3,7 @@
 #include <map>
 #include "Player.h"
 #include "Bullet.h"
+#include "Enemy.h"
 //#include "SFML\Window.hpp"
 //#include "SFML\Audio.hpp"
 
@@ -18,6 +19,9 @@ private:
 
 	//PLAYER
 	Player* player;
+
+	//ENEMIES
+	Enemy* enemy;
 
 	//Private Functions:
 	void initWindow();
