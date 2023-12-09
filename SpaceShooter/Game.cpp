@@ -6,6 +6,11 @@ void Game::initWindow()
 	this->window->setFramerateLimit(60);
 }
 
+void Game::initTextures()
+{
+	
+}
+
 void Game::initPlayer()
 {
 	this->player = new Player();
@@ -34,7 +39,7 @@ void Game::run()
 	}
 }
 
-void Game::update()
+void Game::updatePollEvent()
 {
 	sf::Event ev;
 	while (this->window->pollEvent(ev))
@@ -52,9 +57,12 @@ void Game::update()
 			}
 		}
 	}
+}
 
+void Game::updatePlayerInput()
+{
 	//MOVE PLAYER
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
 		this->player->move(-1.f, 0.f);
 	}
@@ -70,6 +78,13 @@ void Game::update()
 	{
 		this->player->move(0.f, 1.f);
 	}
+}
+
+void Game::update()
+{
+	this->updatePollEvent();
+
+	this->updatePlayerInput();
 }
 
 void Game::render()
