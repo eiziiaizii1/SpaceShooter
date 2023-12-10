@@ -33,6 +33,10 @@ private:
 	//PLAYER
 	Player* player;
 
+	//PLAYER GUI
+	sf::RectangleShape playerHpBar;
+	sf::RectangleShape playerHpBarBack;
+
 	//ENEMIES
 	std::vector<Enemy*> enemies;
 	float spawnTimer;

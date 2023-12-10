@@ -25,6 +25,14 @@ void Game::initGUI()
 	this->pointText.setCharacterSize(24);
 	this->pointText.setFillColor(sf::Color::White);
 	this->pointText.setString("POINTS: ");
+
+	//HP-BAR
+	this->playerHpBar.setSize(sf::Vector2f(300.f, 25.f));
+	this->playerHpBar.setFillColor(sf::Color::Red);
+	this->playerHpBar.setPosition(sf::Vector2f(20.f, 20.f));
+
+	this->playerHpBarBack = this->playerHpBar;
+	this->playerHpBarBack.setFillColor(sf::Color(25, 25, 25, 200));
 }
 
 void Game::initWorldBG()
@@ -49,7 +57,7 @@ void Game::initPlayer()
 
 void Game::initEnemies()
 {
-	this->spawnTimerMax = 50.f;
+	this->spawnTimerMax = 20.f;
 	this->spawnTimer = this->spawnTimerMax;
 }
 
@@ -157,8 +165,12 @@ void Game::updateGUI()
 {
 	std::stringstream ss;
 	ss << "POINTS: " << this->points;
-
 	this->pointText.setString(ss.str());
+
+	//update hp bar gui
+	this->player->setHp(5);
+	float hpPercent = static_cast<float> (this->player->getHp())/ this->player->getHpMax();
+	this->playerHpBar.setSize(sf::Vector2f(300.f * hpPercent,this->playerHpBar.getSize().y));
 }
 
 void Game::updateWorld()
@@ -230,6 +242,13 @@ void Game::updateEnemies()
 			--counter;
 
 		}
+		else if (enemy->getBounds().intersects(this->player->getGlobalBounds()))
+		{
+			//Delete enemy
+			delete this->enemies.at(counter);
+			this->enemies.erase(this->enemies.begin() + counter);
+			--counter;
+		}
 		++counter;
 	}
 
@@ -244,6 +263,8 @@ void Game::updateCombat()
 		{
 			if (this->enemies[i]->getBounds().intersects(this->bullets[k]->getBounds()))
 			{
+				this->points += this->enemies[i]->getPoints();
+
 				delete enemies[i];
 				this->enemies.erase(enemies.begin() + i);
 				enemyDeleted = true;
@@ -278,6 +299,8 @@ void Game::update()
 void Game::renderWorld()
 {
 	this->window->draw(this->worldBackground);
+	this->window->draw(this->playerHpBarBack);
+	this->window->draw(this->playerHpBar);
 }
 
 void Game::renderGUI()
