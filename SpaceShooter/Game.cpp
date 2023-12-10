@@ -15,8 +15,12 @@ void Game::initTextures()
 void Game::initPlayer()
 {
 	this->player = new Player();
+}
 
-	this->enemy = new Enemy(20.f, 20.f);
+void Game::initEnemies()
+{
+	this->spawnTimerMax = 50.f;
+	this->spawnTimer = this->spawnTimerMax;
 }
 
 Game::Game()
@@ -24,6 +28,7 @@ Game::Game()
 	this->initWindow();
 	this->initTextures();
 	this->initPlayer();
+	this->initEnemies();
 }
 
 Game::~Game()
@@ -38,10 +43,16 @@ Game::~Game()
 		delete i.second;
 	}
 
-	//Delete Bullets
+	//DELETE BULLETS
 	for (auto *i : this->bullets)
 	{
 		delete i;
+	}
+
+	//DELETE ENEMIES
+	for (auto *enemy: this->enemies) 
+	{
+		delete enemy;
 	}
 }
 
@@ -98,8 +109,13 @@ void Game::updatePlayerInput()
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) 
 	{
-		this->bullets.push_back(new Bullet(this->textures["BULLET"],
-			this->player->getPosition().x, this->player->getPosition().y, 0.f, -1.f, 5.f));
+		this->bullets.push_back(
+			new Bullet
+			(this->textures["BULLET"],
+			this->player->getPosition().x + (this->player->getGlobalBounds().width / 2) - 36,
+			this->player->getPosition().y - 48, 
+			0.f, -1.f, 5.f)
+		);
 	}
 }
 
@@ -109,7 +125,6 @@ void Game::updateBullets()
 	for(auto *bullet: this->bullets)
 	{
 		bullet->update();
-
 		//Bullet culling (top of the screen)
 		if (bullet->getBounds().top + bullet->getBounds().height < 0.f)
 		{
@@ -124,6 +139,28 @@ void Game::updateBullets()
 	}
 }
 
+void Game::updateEnemies()
+{
+	this->spawnTimer += 0.5f;
+	if (this->spawnTimer >= spawnTimerMax) 
+	{
+		this->enemies.push_back(new Enemy(rand() % this->window->getSize().x, -100.f));
+		this->spawnTimer = 0.f;
+	}
+
+	for (int i = 0; i < this->enemies.size(); ++i)
+	{
+		this->enemies[i]->update();
+
+		//Enemy culling at the bottom
+		if (this->enemies[i]->getBounds().top > this->window->getSize().y)
+		{
+			this->enemies.erase(this->enemies.begin() + i);
+			std::cout << this->enemies.size() << std::endl;
+		}
+	}
+}
+
 void Game::update()
 {
 	this->updatePollEvent();
@@ -133,6 +170,8 @@ void Game::update()
 	this->player->update();
 
 	this->updateBullets();
+
+	this->updateEnemies();
 }
 
 void Game::render()
@@ -141,17 +180,20 @@ void Game::render()
 	//--------------------------------------------------------
 	//     Draw things in here:    // 
 
+	//Render the player
 	this->player->render(*this->window);
 
-	//Render Bullets************************
+	//Render Bullet
 	for (auto *bullet: this->bullets) 
 	{
 		bullet->render(this->window);
 	}
-	//**************************************
 
 	//Render enemies
-	this->enemy->render(this->window);
+	for (auto *enemy : enemies)
+	{
+		enemy->render(this->window);
+	}
 
 	//--------------------------------------------------------
 	this->window->display();

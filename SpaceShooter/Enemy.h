@@ -21,6 +21,9 @@ public:
 	Enemy(float posX, float posY);
 	virtual ~Enemy(); 
 
+	//Accessors / getters
+	const sf::FloatRect getBounds() const;
+
 	//Functions
 	void update();
 	void render(sf::RenderTarget* target);
