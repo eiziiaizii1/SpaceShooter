@@ -12,6 +12,21 @@ void Game::initTextures()
 	this->textures["BULLET"]->loadFromFile("Textures/Bullet.png");
 }
 
+void Game::initGUI()
+{
+	//LOAD font
+	if(!this->font.loadFromFile("Fonts/Montserrat-Bold.ttf"))
+	{
+		std::cout << "failed to load the font" << std::endl;
+	}
+	
+	//init pointText
+	this->pointText.setFont(this->font);
+	this->pointText.setCharacterSize(24);
+	this->pointText.setFillColor(sf::Color::White);
+	this->pointText.setString("POINTS: ");
+}
+
 void Game::initPlayer()
 {
 	this->player = new Player();
@@ -29,6 +44,7 @@ Game::Game()
 	this->initTextures();
 	this->initPlayer();
 	this->initEnemies();
+	this->initGUI();
 }
 
 Game::~Game()
@@ -107,6 +123,7 @@ void Game::updatePlayerInput()
 		this->player->move(0.f, 1.f);
 	}
 
+	//SHOOT THE BULLETS
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->player->canAttack()) 
 	{
 		this->bullets.push_back(
@@ -114,9 +131,13 @@ void Game::updatePlayerInput()
 			(this->textures["BULLET"],
 			this->player->getPosition().x + (this->player->getGlobalBounds().width / 2) - 36,
 			this->player->getPosition().y - 48, 
-			0.f, -1.f, 5.f)
+			0.f, -1.f, 10.f)
 		);
 	}
+}
+
+void Game::updateGUI()
+{
 }
 
 void Game::updateBullets()
@@ -139,7 +160,7 @@ void Game::updateBullets()
 	}
 }
 
-void Game::updateEnemies()
+void Game::updateEnemiesAndCombat()
 {
 	this->spawnTimer += 0.5f;
 	if (this->spawnTimer >= spawnTimerMax) 
@@ -148,16 +169,32 @@ void Game::updateEnemies()
 		this->spawnTimer = 0.f;
 	}
 
-	for (int i = 0; i < this->enemies.size(); ++i)
+	
+	for (int i = 0; i < this->enemies.size(); i++)
 	{
+		bool isEnemyRemoved = false;
 		this->enemies[i]->update();
 
-		//Enemy culling at the bottom
-		if (this->enemies[i]->getBounds().top > this->window->getSize().y)
+		for (int k = 0; k < bullets.size() && !isEnemyRemoved; k++) 
 		{
-			this->enemies.erase(this->enemies.begin() + i);
-			std::cout << this->enemies.size() << std::endl;
+			if (this->bullets[k]->getBounds().intersects(this->enemies[i]->getBounds()))
+			{
+				this->bullets.erase(this->bullets.begin() + k);
+				this->enemies.erase(this->enemies.begin() + i);
+				isEnemyRemoved = true;
+			}
 		}
+
+		//Enemy culling at the bottom
+		if (!isEnemyRemoved)
+		{
+			if (this->enemies[i]->getBounds().top > this->window->getSize().y)
+			{
+				this->enemies.erase(this->enemies.begin() + i);
+				std::cout << this->enemies.size() << std::endl;
+				isEnemyRemoved = true;
+			}
+		}		
 	}
 }
 
@@ -171,7 +208,15 @@ void Game::update()
 
 	this->updateBullets();
 
-	this->updateEnemies();
+	this->updateEnemiesAndCombat();
+
+	this->updateGUI();
+
+}
+
+void Game::renderGUI()
+{
+	this->window->draw(this->pointText);
 }
 
 void Game::render()
@@ -195,6 +240,8 @@ void Game::render()
 		enemy->render(this->window);
 	}
 
+
+	this->renderGUI();
 	//--------------------------------------------------------
 	this->window->display();
 }

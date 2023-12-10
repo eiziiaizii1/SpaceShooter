@@ -10,6 +10,7 @@ void Enemy::initShape()
 void Enemy::initVariables()
 {
 	this->type		= 0;
+	this->speed		= 5.f;
 	this->hpMax		= 10;
 	this->hp		= 0;
 	this->damage	= 1;
@@ -39,7 +40,7 @@ const sf::FloatRect Enemy::getBounds() const
 //FUNCTIONS:
 void Enemy::update()
 {
-	this->shape.move(0.f, 20.f);
+	this->shape.move(0.f, this->speed);
 }
 
 void Enemy::render(sf::RenderTarget* target)
