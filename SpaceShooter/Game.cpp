@@ -37,6 +37,11 @@ void Game::initWorldBG()
 	this->worldBackground.setTexture(this->worldTexture);
 }
 
+void Game::initSystems()
+{
+	this->points = 0;
+}
+
 void Game::initPlayer()
 {
 	this->player = new Player();
@@ -53,6 +58,7 @@ Game::Game()
 	this->initWindow();
 	this->initTextures();
 	this->initWorldBG();
+	this->initSystems();
 	this->initPlayer();
 	this->initEnemies();
 	this->initGUI();
@@ -149,6 +155,10 @@ void Game::updatePlayerInput()
 
 void Game::updateGUI()
 {
+	std::stringstream ss;
+	ss << "POINTS: " << this->points;
+
+	this->pointText.setString(ss.str());
 }
 
 void Game::updateWorld()
