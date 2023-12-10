@@ -63,6 +63,7 @@ void Game::initSystems()
 void Game::initPlayer()
 {
 	this->player = new Player();
+	this -> player->setPosition(this->window->getSize().x/2 - this->player->getGlobalBounds().width/2, this->window->getSize().y);
 }
 
 void Game::initEnemies()
