@@ -21,6 +21,10 @@ private:
 	sf::Font font;
 	sf::Text pointText;
 
+	//WORLD
+	sf::Texture worldTexture;
+	sf::Sprite worldBackground;
+
 	//PLAYER
 	Player* player;
 
@@ -33,6 +37,7 @@ private:
 	void initWindow();
 	void initTextures();
 	void initGUI();
+	void initWorldBG();
 
 	void initPlayer();
 	void initEnemies();
@@ -47,11 +52,14 @@ public:
 	void updatePollEvent();
 	void updatePlayerInput();
 	void updateGUI();
+	void updateWorld();
+	void updateCollision();
 	void updateBullets();
 	void updateEnemies();
 	void updateCombat();
 	void update();
 
+	void renderWorld();
 	void renderGUI();
 	void render();
 };

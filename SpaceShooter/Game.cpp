@@ -27,6 +27,16 @@ void Game::initGUI()
 	this->pointText.setString("POINTS: ");
 }
 
+void Game::initWorldBG()
+{
+	if (!this->worldTexture.loadFromFile("Textures/Background.jpg"))
+	{
+		std::cout << "Couldn't load the background texture" << std::endl;
+	}
+
+	this->worldBackground.setTexture(this->worldTexture);
+}
+
 void Game::initPlayer()
 {
 	this->player = new Player();
@@ -42,6 +52,7 @@ Game::Game()
 {
 	this->initWindow();
 	this->initTextures();
+	this->initWorldBG();
 	this->initPlayer();
 	this->initEnemies();
 	this->initGUI();
@@ -129,7 +140,7 @@ void Game::updatePlayerInput()
 		this->bullets.push_back(
 			new Bullet
 			(this->textures["BULLET"],
-			this->player->getPosition().x + (this->player->getGlobalBounds().width / 2) - 36,
+			this->player->getPosition().x + (this->player->getGlobalBounds().width / 2) - 15,
 			this->player->getPosition().y - 48, 
 			0.f, -1.f, 10.f)
 		);
@@ -138,6 +149,32 @@ void Game::updatePlayerInput()
 
 void Game::updateGUI()
 {
+}
+
+void Game::updateWorld()
+{
+}
+
+void Game::updateCollision()
+{
+	//Left and right boundaries
+	if (this->player->getGlobalBounds().left <= 0.f)
+	{
+		this->player->setPosition(0.f, this->player->getGlobalBounds().top);
+	}
+	else if(this->player->getGlobalBounds().left + this->player->getGlobalBounds().width >= this->window->getSize().x) {
+		this->player->setPosition(this->window->getSize().x - this->player->getGlobalBounds().width, this->player->getGlobalBounds().top);
+	}
+
+	//Top and bottom boundaries
+	if(this->player->getGlobalBounds().top <= 0.f)
+	{
+		this->player->setPosition(this->player->getGlobalBounds().left, 0.f);
+	}
+	else if (this->player->getGlobalBounds().top + this->player->getGlobalBounds().height >= this->window->getSize().y )
+	{
+		this->player->setPosition(this->player->getGlobalBounds().left, this->window->getSize().y - this->player->getGlobalBounds().height);
+	}
 }
 
 void Game::updateBullets()
@@ -215,6 +252,8 @@ void Game::update()
 
 	this->player->update();
 
+	this->updateCollision();
+
 	this->updateBullets();
 
 	this->updateEnemies();
@@ -223,6 +262,12 @@ void Game::update()
 
 	this->updateGUI();
 
+	this->updateWorld();
+}
+
+void Game::renderWorld()
+{
+	this->window->draw(this->worldBackground);
 }
 
 void Game::renderGUI()
@@ -235,6 +280,9 @@ void Game::render()
 	this->window->clear();
 	//--------------------------------------------------------
 	//     Draw things in here:    // 
+	
+	//Render the background
+	this->renderWorld();
 
 	//Render the player
 	this->player->render(*this->window);

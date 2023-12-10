@@ -28,6 +28,10 @@ public:
 	const sf::Vector2f& getPosition() const;
 	const sf::FloatRect getGlobalBounds() const;
 
+	//Setters
+	void setPosition(const sf::Vector2f position);
+	void setPosition(const float x, const float y);
+
 	//Functions:
 	void move(const float directionX, const float directionY);
 	const bool canAttack();
