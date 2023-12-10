@@ -22,6 +22,7 @@ private:
 	//GUI
 	sf::Font font;
 	sf::Text pointText;
+	sf::Text gameOverText;
 
 	//WORLD
 	sf::Texture worldTexture;

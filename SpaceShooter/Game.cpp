@@ -21,6 +21,7 @@ void Game::initGUI()
 	}
 	
 	//init pointText
+	this->pointText.setPosition(15.f, 50.f);
 	this->pointText.setFont(this->font);
 	this->pointText.setCharacterSize(24);
 	this->pointText.setFillColor(sf::Color::White);
@@ -33,6 +34,15 @@ void Game::initGUI()
 
 	this->playerHpBarBack = this->playerHpBar;
 	this->playerHpBarBack.setFillColor(sf::Color(25, 25, 25, 200));
+
+	//GAMEOVER text
+	this->gameOverText.setFont(this->font);
+	this->gameOverText.setCharacterSize(64);
+	this->gameOverText.setFillColor(sf::Color::Red);
+	this->gameOverText.setString("GAME OVER");
+	this->gameOverText.setPosition(
+		this->window->getSize().x/2.f - this->gameOverText.getGlobalBounds().width/2.f,
+		this->window->getSize().y / 2.f - this->gameOverText.getGlobalBounds().height / 2.f);
 }
 
 void Game::initWorldBG()
@@ -103,7 +113,11 @@ void Game::run()
 {
 	while (this->window->isOpen())
 	{
-		this->update();
+		this->updatePollEvent();
+		if(this->player->getHp()>0)
+		{
+			this->update();
+		}
 		this->render();
 	}
 }
@@ -168,7 +182,6 @@ void Game::updateGUI()
 	this->pointText.setString(ss.str());
 
 	//update hp bar gui
-	this->player->setHp(5);
 	float hpPercent = static_cast<float> (this->player->getHp())/ this->player->getHpMax();
 	this->playerHpBar.setSize(sf::Vector2f(300.f * hpPercent,this->playerHpBar.getSize().y));
 }
@@ -211,10 +224,7 @@ void Game::updateBullets()
 			//Delete Bullet
 			delete this->bullets.at(counter);
 			this->bullets.erase(this->bullets.begin() + counter);
-			--counter;
-
 		}
-
 		++counter;
 	}
 }
@@ -239,15 +249,14 @@ void Game::updateEnemies()
 			//Delete enemy
 			delete this->enemies.at(counter);
 			this->enemies.erase(this->enemies.begin() + counter);
-			--counter;
-
 		}
+		//ENEMY PLAYER COLLISION
 		else if (enemy->getBounds().intersects(this->player->getGlobalBounds()))
 		{
 			//Delete enemy
+			this->player->loseHp(this->enemies.at(counter)->getDamage());
 			delete this->enemies.at(counter);
 			this->enemies.erase(this->enemies.begin() + counter);
-			--counter;
 		}
 		++counter;
 	}
@@ -277,8 +286,6 @@ void Game::updateCombat()
 
 void Game::update()
 {
-	this->updatePollEvent();
-
 	this->updatePlayerInput();
 
 	this->player->update();
@@ -334,6 +341,13 @@ void Game::render()
 
 
 	this->renderGUI();
+
+	//Game over screen
+	if (this->player->getHp() <=0)
+	{
+		this->window->draw(this->gameOverText);
+	}
+
 	//--------------------------------------------------------
 	this->window->display();
 }
